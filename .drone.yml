@@ -21,7 +21,7 @@ steps:
       - name: reports
         path: /var/reports
     commands:
-      - apt-get update -qqy && DEBIAN_FRONTEND=noninteractive apt-get -yq install git build-essential  debhelper dh-autoreconf dh-systemd dpkg-dev zlib1g-dev uuid-dev libuv1-dev liblz4-dev libjudy-dev libssl-dev li    bmnl-dev libjson-c-dev libcups2-dev libipmimonitoring-dev libnetfilter-acct-dev libsnappy-dev libprotobuf-dev libprotoc-dev autogen autoconf automake pkg-config curl gcc g++ sshpass
+      - apt-get update -qqy && DEBIAN_FRONTEND=noninteractive apt-get -yq install git build-essential  debhelper dh-autoreconf dh-systemd dpkg-dev zlib1g-dev uuid-dev libuv1-dev liblz4-dev libjudy-dev libssl-dev libmnl-dev libjson-c-dev libcups2-dev libipmimonitoring-dev libnetfilter-acct-dev libsnappy-dev libprotobuf-dev libprotoc-dev autogen autoconf automake pkg-config curl gcc g++ sshpass
       #- apt-get update -qqy && apt-get install -qq -y git build-essential  debhelper dh-autoreconf dh-systemd dpkg-dev zlib1g-dev uuid-dev libuv1-dev liblz4-dev libjudy-dev libssl-dev libmnl-dev libjson-c-dev libcups2-dev libipmimonitoring-dev libnetfilter-acct-dev libsnappy-dev libprotobuf-dev libprotoc-dev autogen autoconf automake pkg-config curl gcc g++ sshpass
       - git clone https://github.com/netdata/netdata.git
       - cd netdata
