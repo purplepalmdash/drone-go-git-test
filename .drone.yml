@@ -58,7 +58,7 @@ steps:
       - git checkout tags/v1.16.1 -b local_1.16.1
       - sed -i 's/PREVIOUS_PACKAGE_VERSION/1.16.1/g' contrib/debian/changelog
       - sed -i 's/PREVIOUS_PACKAGE_DATE/Mon, 2 Sep 2019 23:09:59 +0000/g' contrib/debian/changelog
-      - sed -i '/cups/d' contrib/debian/*
+      - sed -i '/cups/d' contrib/debian/control*
       - ln -s contrib/debian
       - dpkg-buildpackage -us -uc -rfakeroot
       - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../netdata_1.16.1_amd64.deb root@209.141.35.192:/root/static
