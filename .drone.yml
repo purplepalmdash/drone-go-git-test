@@ -33,7 +33,7 @@ steps:
       - ln -s contrib/debian
       - dpkg-buildpackage -us -uc -rfakeroot
       - ls ../
-      - sshpass -p $VPSPASS scp -p2282 ../netdata_1.16.1_arm64.deb root@209.141.35.192:/root/static
+      - sshpass -p $VPSPASS scp -P2282 ../netdata_1.16.1_arm64.deb root@209.141.35.192:/root/static
 
 #  - name: build
 #    image: golang
