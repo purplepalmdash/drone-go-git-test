@@ -22,7 +22,7 @@ steps:
       - git clone https://github.com/netdata/netdata.git
       - cd netdata
       - git checkout tags/v1.16.1 -b local_1.16.1
-      - sed -i 's/PREVIOUS_PACKAGE_VERSION/v1.16.1/g' contrib/debian/changelog
+      - sed -i 's/PREVIOUS_PACKAGE_VERSION/1.16.1/g' contrib/debian/changelog
       - sed -i 's/PREVIOUS_PACKAGE_DATE/Mon, 2 Sep 2019 23:09:59 +0000/g' contrib/debian/changelog
       - ln -s contrib/debian
       - dpkg-buildpackage -us -uc -rfakeroot
