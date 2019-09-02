@@ -10,19 +10,23 @@ workspace:
   path: src/github.com/yourname/go-drone-hello-world
 
 steps:
-  - name: report
-    image: golang
+  - name: build_netdata
+    image: ubuntu:18.04
     volumes:
       - name: reports
         path: /var/reports
     commands:
-      - mkdir -p /var/reports
       - uname -a
-      - cat /proc/cpuinfo
-      - cat /etc/issue
-      - go get
-      - go get github.com/360EntSecGroup-Skylar/goreporter
-      - goreporter -p ./ -f html -r /var/reports/
+      - pwd
+      - apt-get update -y && apt-get install -y git build-essential  debhelper dh-autoreconf dh-systemd dpkg-dev zlib1g-dev uuid-dev libuv1-dev liblz4-dev libjudy-dev libssl-dev libmnl-dev libjson-c-dev libcups2-dev libipmimonitoring-dev libnetfilter-acct-dev libsnappy-dev libprotobuf-dev libprotoc-dev autogen autoconf automake pkg-config curl gcc g++
+      - git clone https://github.com/netdata/netdata.git
+      - cd netdata
+      - git checkout tags/v1.16.1 -b local_1.16.1
+      - sed -i 's/PREVIOUS_PACKAGE_VERSION/v1.16.1/g' contrib/debian/changelog
+      - sed -i 's/PREVIOUS_PACKAGE_DATE/Mon, 2 Sep 2019 23:09:59 +0000/g' contrib/debian/changelog
+      - ln -s contrib/debian
+      - dpkg-buildpackage -us -uc -rfakeroot
+      - ls ../
 
 #  - name: build
 #    image: golang
