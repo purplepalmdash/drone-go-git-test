@@ -97,6 +97,7 @@ steps:
     commands:
       - rm -f /etc/apt/apt.conf.d/docker-clean
       - apt-get update -qqy && DEBIAN_FRONTEND=noninteractive apt-get -yq install git build-essential  debhelper dh-autoreconf dh-systemd dpkg-dev zlib1g-dev uuid-dev libuv1-dev liblz4-dev libjudy-dev libssl-dev libmnl-dev libjson-c-dev libipmimonitoring-dev libnetfilter-acct-dev libsnappy-dev libprotobuf-dev libprotoc-dev autogen autoconf automake pkg-config curl gcc g++ sshpass
+      - mkdir xenial && cd xenial
       - git clone https://github.com/netdata/netdata.git
       - cd netdata
       - git checkout tags/v1.16.1 -b local_1.16.1
@@ -121,8 +122,9 @@ steps:
       - rm -f /etc/apt/apt.conf.d/docker-clean
       - apt-get update -qqy 
       - DEBIAN_FRONTEND=noninteractive apt-get -yq install wget sshpass xz-utils
+      - cd xenial
       - mkdir ../amd64debs_xenial
-      - cd ../amd64debs && wget --quiet http://209.141.35.192/netdata_1.16.1_amd64_xenial.deb && apt-get install -y ./netdata_1.16.1_amd64_xenial.deb
+      - cd ../amd64debs_xenial && wget --quiet http://209.141.35.192/netdata_1.16.1_amd64_xenial.deb && apt-get install -y ./netdata_1.16.1_amd64_xenial.deb
       - find /var/cache | grep deb$ | xargs -I % cp % ../amd64debs_xenial/
       - cd .. && tar cJf amd64debs_xenial.tar.xz amd64debs_xenial && cd -
       - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../amd64debs_xenial.tar.xz root@209.141.35.192:/root/static
