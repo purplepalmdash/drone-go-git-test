@@ -42,7 +42,7 @@ steps:
 
   - name: build_netdata_amd64
     #image: ubuntu:bionic-20190424
-    image: feipyang/rong:1804
+    image: feipyang/rong:1604
     environment:
       LOCALPASS:
         from_secret: testpass
@@ -63,11 +63,12 @@ steps:
       - sed -i '/cups/d' contrib/debian/control*
       - ln -s contrib/debian
       - dpkg-buildpackage -us -uc -rfakeroot
-      - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../netdata_1.16.1_amd64.deb root@209.141.35.192:/root/static
+      - mv ../netdata_1.16.1_amd64.deb ../netdata_1.16.1_amd64_xenial.deb
+      - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../netdata_1.16.1_amd64_xenial.deb root@209.141.35.192:/root/static
 
   - name: generate_deb_amd64
     #image: ubuntu:bionic-20190424
-    image: feipyang/rong:1804
+    image: feipyang/rong:1604
     environment:
       VPSPASS:
         from_secret: vpspass
@@ -80,10 +81,10 @@ steps:
       - apt-get update -qqy 
       - DEBIAN_FRONTEND=noninteractive apt-get -yq install wget sshpass xz-utils
       - mkdir ../amd64debs
-      - cd ../amd64debs && wget --quiet http://209.141.35.192/netdata_1.16.1_amd64.deb && apt-get install -y ./netdata_1.16.1_amd64.deb
+      - cd ../amd64debs && wget --quiet http://209.141.35.192/netdata_1.16.1_amd64_xenial.deb && apt-get install -y ./netdata_1.16.1_amd64_xenial.deb
       - find /var/cache | grep deb$ | xargs -I % cp % ../amd64debs/
-      - cd .. && tar cJf amd64debs.tar.xz amd64debs && cd -
-      - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../amd64debs.tar.xz root@209.141.35.192:/root/static
+      - cd .. && tar cJf amd64debs_xenial.tar.xz amd64debs && cd -
+      - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../amd64debs_xenial.tar.xz root@209.141.35.192:/root/static
 
 ##*  - name: build_netdata_amd64_xenial
 ##*    #image: ubuntu:18.04
