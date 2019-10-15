@@ -40,9 +40,56 @@ steps:
 #*      #- sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../netdata_1.16.1_arm64.deb root@209.141.35.192:/root/static
 #*      - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ../debs/ root@209.141.35.192:/root/static
 
-  - name: build_netdata_amd64
-    #image: ubuntu:bionic-20190424
-    image: feipyang/rong:1604
+#*1804  - name: build_netdata_amd64
+#*1804    #image: ubuntu:bionic-20190424
+#*1804    image: feipyang/rong:1804
+#*1804    environment:
+#*1804      LOCALPASS:
+#*1804        from_secret: testpass
+#*1804      VPSPASS:
+#*1804        from_secret: vpspass
+#*1804    volumes:
+#*1804      - name: reports
+#*1804        path: /var/reports
+#*1804    commands:
+#*1804      - rm -f /etc/apt/apt.conf.d/docker-clean && rm -f /etc/apt/sources.list
+#*1804      - cd /etc/apt &&  wget https://gist.githubusercontent.com/h0bbel/4b28ede18d65c3527b11b12fa36aa8d1/raw/a4ab1c13a92171822215143b1e3b3eb6add7a78d/sources.list 
+#*1804      - apt-get update -qqy && DEBIAN_FRONTEND=noninteractive apt-get -yq install git build-essential  debhelper dh-autoreconf dh-systemd dpkg-dev zlib1g-dev uuid-dev libuv1-dev liblz4-dev libjudy-dev libssl-dev libmnl-dev libjson-c-dev libipmimonitoring-dev libnetfilter-acct-dev libsnappy-dev libprotobuf-dev libprotoc-dev autogen autoconf automake pkg-config curl gcc g++ sshpass
+#*1804      - git clone https://github.com/netdata/netdata.git
+#*1804      - cd netdata
+#*1804      - git checkout tags/v1.16.1 -b local_1.16.1
+#*1804      - sed -i 's/PREVIOUS_PACKAGE_VERSION/1.16.1/g' contrib/debian/changelog
+#*1804      - sed -i 's/PREVIOUS_PACKAGE_DATE/Mon, 2 Sep 2019 23:09:59 +0000/g' contrib/debian/changelog
+#*1804      - sed -i '/cups/d' contrib/debian/control*
+#*1804      - ln -s contrib/debian
+#*1804      - dpkg-buildpackage -us -uc -rfakeroot
+#*1804      - mv ../netdata_1.16.1_amd64.deb ../netdata_1.16.1_amd64_xenial.deb
+#*1804      - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../netdata_1.16.1_amd64_xenial.deb root@209.141.35.192:/root/static
+#*1804
+#*1804  - name: generate_deb_amd64
+#*1804    #image: ubuntu:bionic-20190424
+#*1804    image: feipyang/rong:1804
+#*1804    environment:
+#*1804      VPSPASS:
+#*1804        from_secret: vpspass
+#*1804    volumes:
+#*1804      - name: reports
+#*1804        path: /var/reports
+#*1804    commands:
+#*1804      - rm -f /etc/apt/apt.conf.d/docker-clean && rm -f /etc/apt/sources.list
+#*1804      #- cd /etc/apt &&  wget https://gist.githubusercontent.com/h0bbel/4b28ede18d65c3527b11b12fa36aa8d1/raw/a4ab1c13a92171822215143b1e3b3eb6add7a78d/sources.list && sed -i 's/bionic/xenial/g' /etc/apt/sources.list
+#*1804      - cd /etc/apt &&  wget https://gist.githubusercontent.com/h0bbel/4b28ede18d65c3527b11b12fa36aa8d1/raw/a4ab1c13a92171822215143b1e3b3eb6add7a78d/sources.list
+#*1804      - apt-get update -qqy 
+#*1804      - DEBIAN_FRONTEND=noninteractive apt-get -yq install wget sshpass xz-utils
+#*1804      - mkdir ../amd64debs
+#*1804      - cd ../amd64debs && wget --quiet http://209.141.35.192/netdata_1.16.1_amd64_xenial.deb && apt-get install -y ./netdata_1.16.1_amd64_xenial.deb
+#*1804      - find /var/cache | grep deb$ | xargs -I % cp % ../amd64debs/
+#*1804      - cd .. && tar cJf amd64debs_xenial.tar.xz amd64debs && cd -
+#*1804      - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../amd64debs_xenial.tar.xz root@209.141.35.192:/root/static
+
+  - name: build_netdata_amd64_xenial
+    #image: ubuntu:18.04
+    image: ubuntu:16.04
     environment:
       LOCALPASS:
         from_secret: testpass
@@ -52,22 +99,23 @@ steps:
       - name: reports
         path: /var/reports
     commands:
-      - rm -f /etc/apt/apt.conf.d/docker-clean && rm -f /etc/apt/sources.list
-      - cd /etc/apt &&  wget https://gist.githubusercontent.com/h0bbel/4b28ede18d65c3527b11b12fa36aa8d1/raw/a4ab1c13a92171822215143b1e3b3eb6add7a78d/sources.list && sed -i 's/bionic/xenial/g' /etc/apt/sources.list
+      - rm -f /etc/apt/apt.conf.d/docker-clean
       - apt-get update -qqy && DEBIAN_FRONTEND=noninteractive apt-get -yq install git build-essential  debhelper dh-autoreconf dh-systemd dpkg-dev zlib1g-dev uuid-dev libuv1-dev liblz4-dev libjudy-dev libssl-dev libmnl-dev libjson-c-dev libipmimonitoring-dev libnetfilter-acct-dev libsnappy-dev libprotobuf-dev libprotoc-dev autogen autoconf automake pkg-config curl gcc g++ sshpass
+      - mkdir xenial && cd xenial
       - git clone https://github.com/netdata/netdata.git
       - cd netdata
       - git checkout tags/v1.16.1 -b local_1.16.1
       - sed -i 's/PREVIOUS_PACKAGE_VERSION/1.16.1/g' contrib/debian/changelog
       - sed -i 's/PREVIOUS_PACKAGE_DATE/Mon, 2 Sep 2019 23:09:59 +0000/g' contrib/debian/changelog
       - sed -i '/cups/d' contrib/debian/control*
+      - sed -i 's/libprotoc10/libprotoc9v5/g' contrib/debian/control*
+      - sed -i 's/libjson-c3/libjson-c2/g' contrib/debian/control*
       - ln -s contrib/debian
       - dpkg-buildpackage -us -uc -rfakeroot
       - mv ../netdata_1.16.1_amd64.deb ../netdata_1.16.1_amd64_xenial.deb
       - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../netdata_1.16.1_amd64_xenial.deb root@209.141.35.192:/root/static
 
-  - name: generate_deb_amd64
-    #image: ubuntu:bionic-20190424
+  - name: generate_deb_amd64_xenial
     image: feipyang/rong:1604
     environment:
       VPSPASS:
@@ -76,65 +124,17 @@ steps:
       - name: reports
         path: /var/reports
     commands:
-      - rm -f /etc/apt/apt.conf.d/docker-clean && rm -f /etc/apt/sources.list
-      - cd /etc/apt &&  wget https://gist.githubusercontent.com/h0bbel/4b28ede18d65c3527b11b12fa36aa8d1/raw/a4ab1c13a92171822215143b1e3b3eb6add7a78d/sources.list && sed -i 's/bionic/xenial/g' /etc/apt/sources.list
-      #- cd /etc/apt &&  wget https://gist.githubusercontent.com/h0bbel/4b28ede18d65c3527b11b12fa36aa8d1/raw/a4ab1c13a92171822215143b1e3b3eb6add7a78d/sources.list
+      - rm -f /etc/apt/apt.conf.d/docker-clean
+      - cd /etc/apt &&  wget https://gist.githubusercontent.com/h0bbel/4b28ede18d65c3527b11b12fa36aa8d1/raw/a4ab1c13a92171822215143b1e3b3eb6add7a78d/sources.list && sed -i 's/bionic/xenial/g' /etc/apt/sources.list && sed -i 's/bionic/xenial/g' /etc/apt/sources.list
       - apt-get update -qqy 
-      - DEBIAN_FRONTEND=noninteractive apt-get -yq install wget sshpass xz-utils
-      - mkdir ../amd64debs
-      - cd ../amd64debs && wget --quiet http://209.141.35.192/netdata_1.16.1_amd64_xenial.deb && apt-get install -y ./netdata_1.16.1_amd64_xenial.deb
-      - find /var/cache | grep deb$ | xargs -I % cp % ../amd64debs/
-      - cd .. && tar cJf amd64debs_xenial.tar.xz amd64debs && cd -
+      - DEBIAN_FRONTEND=noninteractive apt-get -yq install wget sshpass xz-utils docker-registry
+      - mkdir -p xenial && cd xenial
+      - mkdir ../amd64debs_xenial
+      - cd ../amd64debs_xenial && wget --quiet http://209.141.35.192/netdata_1.16.1_amd64_xenial.deb && apt-get install -y ./netdata_1.16.1_amd64_xenial.deb
+      - find /var/cache | grep deb$ | xargs -I % cp % ../amd64debs_xenial/
+      - cd .. && tar cJf amd64debs_xenial.tar.xz amd64debs_xenial && cd -
       - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../amd64debs_xenial.tar.xz root@209.141.35.192:/root/static
 
-##*  - name: build_netdata_amd64_xenial
-##*    #image: ubuntu:18.04
-##*    image: ubuntu:16.04
-##*    environment:
-##*      LOCALPASS:
-##*        from_secret: testpass
-##*      VPSPASS:
-##*        from_secret: vpspass
-##*    volumes:
-##*      - name: reports
-##*        path: /var/reports
-##*    commands:
-##*      - rm -f /etc/apt/apt.conf.d/docker-clean
-##*      - apt-get update -qqy && DEBIAN_FRONTEND=noninteractive apt-get -yq install git build-essential  debhelper dh-autoreconf dh-systemd dpkg-dev zlib1g-dev uuid-dev libuv1-dev liblz4-dev libjudy-dev libssl-dev libmnl-dev libjson-c-dev libipmimonitoring-dev libnetfilter-acct-dev libsnappy-dev libprotobuf-dev libprotoc-dev autogen autoconf automake pkg-config curl gcc g++ sshpass
-##*      - mkdir xenial && cd xenial
-##*      - git clone https://github.com/netdata/netdata.git
-##*      - cd netdata
-##*      - git checkout tags/v1.16.1 -b local_1.16.1
-##*      - sed -i 's/PREVIOUS_PACKAGE_VERSION/1.16.1/g' contrib/debian/changelog
-##*      - sed -i 's/PREVIOUS_PACKAGE_DATE/Mon, 2 Sep 2019 23:09:59 +0000/g' contrib/debian/changelog
-##*      - sed -i '/cups/d' contrib/debian/control*
-##*      - sed -i 's/libprotoc10/libprotoc9v5/g' contrib/debian/control*
-##*      - sed -i 's/libjson-c3/libjson-c2/g' contrib/debian/control*
-##*      - ln -s contrib/debian
-##*      - dpkg-buildpackage -us -uc -rfakeroot
-##*      - mv ../netdata_1.16.1_amd64.deb ../netdata_1.16.1_amd64_xenial.deb
-##*      - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../netdata_1.16.1_amd64_xenial.deb root@209.141.35.192:/root/static
-##*
-##*  - name: generate_deb_amd64_xenial
-##*    #image: ubuntu:18.04
-##*    image: ubuntu:16.04
-##*    environment:
-##*      VPSPASS:
-##*        from_secret: vpspass
-##*    volumes:
-##*      - name: reports
-##*        path: /var/reports
-##*    commands:
-##*      - rm -f /etc/apt/apt.conf.d/docker-clean
-##*      - apt-get update -qqy 
-##*      - DEBIAN_FRONTEND=noninteractive apt-get -yq install wget sshpass xz-utils
-##*      - mkdir -p xenial && cd xenial
-##*      - mkdir ../amd64debs_xenial
-##*      - cd ../amd64debs_xenial && wget --quiet http://209.141.35.192/netdata_1.16.1_amd64_xenial.deb && apt-get install -y ./netdata_1.16.1_amd64_xenial.deb
-##*      - find /var/cache | grep deb$ | xargs -I % cp % ../amd64debs_xenial/
-##*      - cd .. && tar cJf amd64debs_xenial.tar.xz amd64debs_xenial && cd -
-##*      - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../amd64debs_xenial.tar.xz root@209.141.35.192:/root/static
-##*
 #  - name: build
 #    image: golang
 #    commands:
