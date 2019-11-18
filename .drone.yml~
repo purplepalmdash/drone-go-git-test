@@ -54,13 +54,13 @@ steps:
   commands:
     - rm -f /etc/apt/apt.conf.d/docker-clean && rm -f /etc/apt/sources.list
     - cd /etc/apt &&  wget https://gist.githubusercontent.com/h0bbel/4b28ede18d65c3527b11b12fa36aa8d1/raw/a4ab1c13a92171822215143b1e3b3eb6add7a78d/sources.list 
-    - apt-get update -qqy && DEBIAN_FRONTEND=noninteractive apt-get -yq install git build-essential  debhelper dh-autoreconf dh-systemd dpkg-dev zlib1g-dev uuid-dev libuv1-dev liblz4-dev libjudy-dev libssl-dev libmnl-dev libjson-c-dev libipmimonitoring-dev libnetfilter-acct-dev libsnappy-dev libprotobuf-dev libprotoc-dev autogen autoconf automake pkg-config curl gcc g++ sshpass
+    - apt-get update -qqy && DEBIAN_FRONTEND=noninteractive apt-get -yq install git build-essential  debhelper dh-autoreconf dh-systemd dpkg-dev zlib1g-dev uuid-dev libuv1-dev liblz4-dev libjudy-dev libssl-dev libmnl-dev libjson-c-dev libipmimonitoring-dev libnetfilter-acct-dev libsnappy-dev libprotobuf-dev libprotoc-dev autogen autoconf automake pkg-config curl gcc g++ sshpass libcups2-dev
     - git clone https://github.com/netdata/netdata.git
     - cd netdata
     - git checkout tags/v1.18.1 -b local_1.18.1
     - sed -i 's/PREVIOUS_PACKAGE_VERSION/1.18.1/g' contrib/debian/changelog
     - sed -i 's/PREVIOUS_PACKAGE_DATE/Mon, 2 Sep 2019 23:09:59 +0000/g' contrib/debian/changelog
-    - sed -i '/cups/d' contrib/debian/control*
+    #- sed -i '/cups/d' contrib/debian/control*
     - ln -s contrib/debian
     - dpkg-buildpackage -us -uc -rfakeroot
     - mv ../netdata_1.18.1_amd64.deb ../netdata_1.18.1_amd64_bionic.deb
