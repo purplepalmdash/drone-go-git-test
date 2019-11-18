@@ -66,26 +66,26 @@ steps:
     - mv ../netdata_1.18.1_amd64.deb ../netdata_1.18.1_amd64_bionic.deb
     - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../netdata_1.18.1_amd64_bonic.deb root@209.141.35.192:/root/static
 
-#*1804- name: generate_deb_amd64
-#*1804  #image: ubuntu:bionic-20190424
-#*1804  image: feipyang/rong:1804
-#*1804  environment:
-#*1804    VPSPASS:
-#*1804      from_secret: vpspass
-#*1804  volumes:
-#*1804    - name: reports
-#*1804      path: /var/reports
-#*1804  commands:
-#*1804    - rm -f /etc/apt/apt.conf.d/docker-clean && rm -f /etc/apt/sources.list
-#*1804    #- cd /etc/apt &&  wget https://gist.githubusercontent.com/h0bbel/4b28ede18d65c3527b11b12fa36aa8d1/raw/a4ab1c13a92171822215143b1e3b3eb6add7a78d/sources.list && sed -i 's/bionic/xenial/g' /etc/apt/sources.list
-#*1804    - cd /etc/apt &&  wget https://gist.githubusercontent.com/h0bbel/4b28ede18d65c3527b11b12fa36aa8d1/raw/a4ab1c13a92171822215143b1e3b3eb6add7a78d/sources.list
-#*1804    - apt-get update -qqy 
-#*1804    - DEBIAN_FRONTEND=noninteractive apt-get -yq install wget sshpass xz-utils
-#*1804    - mkdir ../amd64debs
-#*1804    - cd ../amd64debs && wget --quiet http://209.141.35.192/netdata_1.16.1_amd64_xenial.deb && apt-get install -y ./netdata_1.16.1_amd64_xenial.deb
-#*1804    - find /var/cache | grep deb$ | xargs -I % cp % ../amd64debs/
-#*1804    - cd .. && tar cJf amd64debs_xenial.tar.xz amd64debs && cd -
-#*1804    - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../amd64debs_xenial.tar.xz root@209.141.35.192:/root/static
+- name: generate_deb_amd64
+  #image: ubuntu:bionic-20190424
+  image: feipyang/rong:1804
+  environment:
+    VPSPASS:
+      from_secret: vpspass
+  volumes:
+    - name: reports
+      path: /var/reports
+  commands:
+    - rm -f /etc/apt/apt.conf.d/docker-clean && rm -f /etc/apt/sources.list
+    #- cd /etc/apt &&  wget https://gist.githubusercontent.com/h0bbel/4b28ede18d65c3527b11b12fa36aa8d1/raw/a4ab1c13a92171822215143b1e3b3eb6add7a78d/sources.list && sed -i 's/bionic/xenial/g' /etc/apt/sources.list
+    - cd /etc/apt &&  wget https://gist.githubusercontent.com/h0bbel/4b28ede18d65c3527b11b12fa36aa8d1/raw/a4ab1c13a92171822215143b1e3b3eb6add7a78d/sources.list
+    - apt-get update -qqy 
+    - DEBIAN_FRONTEND=noninteractive apt-get -yq install wget sshpass xz-utils
+    - mkdir ../amd64debs
+    - cd ../amd64debs && wget --quiet http://209.141.35.192/netdata_1.16.1_amd64_xenial.deb && apt-get install -y ./netdata_1.16.1_amd64_xenial.deb
+    - find /var/cache | grep deb$ | xargs -I % cp % ../amd64debs/
+    - cd .. && tar cJf amd64debs_xenial.tar.xz amd64debs && cd -
+    - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../amd64debs_xenial.tar.xz root@209.141.35.192:/root/static
 
 #*1604  - name: build_netdata_amd64_xenial
 #*1604    #image: ubuntu:18.04
