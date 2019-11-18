@@ -60,7 +60,7 @@ steps:
     - git checkout tags/v1.18.1 -b local_1.18.1
     - sed -i 's/PREVIOUS_PACKAGE_VERSION/1.18.1/g' contrib/debian/changelog
     - sed -i 's/PREVIOUS_PACKAGE_DATE/Mon, 2 Sep 2019 23:09:59 +0000/g' contrib/debian/changelog
-    - sed -i '/cups/d' contrib/debian/control*
+    #- sed -i '/cups/d' contrib/debian/control*
     - ln -s contrib/debian
     - dpkg-buildpackage -us -uc -rfakeroot
     - mv ../netdata_1.18.1_amd64.deb ../netdata_1.18.1_amd64_bionic.deb
