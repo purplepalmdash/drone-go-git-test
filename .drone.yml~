@@ -64,7 +64,7 @@ steps:
     - ln -s contrib/debian
     - dpkg-buildpackage -us -uc -rfakeroot
     - mv ../netdata_1.18.1_amd64.deb ../netdata_1.18.1_amd64_bionic.deb
-    - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../netdata_1.18.1_amd64_bonic.deb root@209.141.35.192:/root/static
+    - sshpass -p $VPSPASS scp -P2282 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ../netdata_1.18.1_amd64_bionic.deb root@209.141.35.192:/root/static
 
 #*1804- name: generate_deb_amd64
 #*1804  #image: ubuntu:bionic-20190424
